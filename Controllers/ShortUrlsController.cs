@@ -90,6 +90,16 @@ public class ShortUrlsController : ControllerBase
         return url == null ? NotFound() : Ok(url);
     }
 
+    [HttpGet("{shortCode}")]
+    public async Task<IActionResult> RedirectToOriginalUrl(string shortCode)
+    {
+        var entity = await _context.ShortUrls.FirstOrDefaultAsync(x => x.ShortCode == shortCode);
+        if (entity == null)
+            return NotFound();
+
+        return Redirect(entity.OriginalUrl);
+    }
+
     private string GenerateShortCode()
     {
         // Проста версія — можу запропонувати Base62
