@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "About - URL Shortener Algorithm";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div>
+    <h4>About the Algorithm</h4>
+    <p>
+        This URL shortener works by taking a long URL and generating a short URL.
+        The short URL is a compressed version of the original URL that redirects to the
+        original URL when accessed. The system uses a base62 encoding algorithm to generate
+        the short URL. Each shortened URL is stored in a database with its corresponding
+        original URL and additional metadata like creation date and user who created it.
+    </p>
+
+    <h5>How It Works:</h5>
+    <ul>
+        <li>When a user inputs a long URL, the system checks if it already exists in the database.</li>
+        <li>If it exists, the system will return the corresponding short URL.</li>
+        <li>If it doesn't exist, the system will create a new short URL and store the mapping.</li>
+        <li>Users can share the short URL, which will redirect them to the original long URL.</li>
+    </ul>
+</div>
