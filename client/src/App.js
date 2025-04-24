@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { CheckCircle, XCircle, Clipboard, Trash2 } from "lucide-react";
 
 export default function App() {
   const [originalUrl, setOriginalUrl] = useState("");
   const [shortUrls, setShortUrls] = useState([]);
   const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState(""); // Тип повідомлення
+  const [messageType, setMessageType] = useState("");
 
   const fetchUrls = async () => {
     try {
@@ -24,19 +25,17 @@ export default function App() {
     e.preventDefault();
     try {
       const res = await axios.post("/api/shorturls", JSON.stringify(originalUrl), {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
-      setMessage("Твій URL успішно скорочено!"); // Оновлене повідомлення
+      setMessage("Твій URL успішно скорочено!");
       setMessageType("success");
       setOriginalUrl("");
       fetchUrls();
-      setTimeout(() => setMessage(""), 1000); // Повідомлення зникає через 1 секунду
+      setTimeout(() => setMessage(""), 1500);
     } catch (err) {
       setMessage("Ой, сталася помилка при створенні шорт-ссилки.");
       setMessageType("error");
-      setTimeout(() => setMessage(""), 1000); // Повідомлення зникає через 1 секунду
+      setTimeout(() => setMessage(""), 1500);
     }
   };
 
@@ -46,95 +45,107 @@ export default function App() {
       setMessage("URL успішно видалено!");
       setMessageType("success");
       fetchUrls();
-      setTimeout(() => setMessage(""), 1000); // Повідомлення зникає через 1 секунду
+      setTimeout(() => setMessage(""), 1500);
     } catch (err) {
       setMessage("Помилка при видаленні URL.");
       setMessageType("error");
-      setTimeout(() => setMessage(""), 1000); // Повідомлення зникає через 1 секунду
+      setTimeout(() => setMessage(""), 1500);
     }
   };
 
-  // Функція для копіювання URL в буфер
   const copyToClipboard = (shortCode) => {
     const url = `https://localhost:7172/${shortCode}`;
     navigator.clipboard.writeText(url).then(
       () => {
         setMessage("URL успішно скопійовано!");
         setMessageType("success");
-        setTimeout(() => setMessage(""), 1000); // Повідомлення зникає через 1 секунду
+        setTimeout(() => setMessage(""), 1500);
       },
       (err) => {
         setMessage("Помилка при копіюванні.");
         setMessageType("error");
-        console.error("Помилка при копіюванні:", err);
-        setTimeout(() => setMessage(""), 1000); // Повідомлення зникає через 1 секунду
+        setTimeout(() => setMessage(""), 1500);
       }
     );
   };
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">URL Shortener</h1>
-      <form onSubmit={handleSubmit} className="mb-4">
-        <input
-          type="text"
-          className="border rounded w-full p-2 mb-2"
-          value={originalUrl}
-          onChange={(e) => setOriginalUrl(e.target.value)}
-          placeholder="Введи повну URL-адресу"
-        />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Скоротити
-        </button>
-      </form>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+      <div className="bg-white shadow-xl rounded-xl p-6 w-full max-w-3xl">
+        <h1 className="text-3xl font-bold mb-6 text-center text-blue-600">URL Shortener</h1>
 
-      {/* Повідомлення */}
-      {message && (
-        <div
-          className={`mb-4 p-2 rounded ${
-            messageType === "success" ? "bg-green-500" : "bg-red-500"
-          } text-white`}
-        >
-          {message}
-        </div>
-      )}
+        <form onSubmit={handleSubmit} className="mb-6">
+          <input
+            type="text"
+            className="border rounded w-full p-3 mb-2 text-gray-800"
+            value={originalUrl}
+            onChange={(e) => setOriginalUrl(e.target.value)}
+            placeholder="Enter full URL"
+          />
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded w-full"
+          >
+            🚀 Shorten
+          </button>
+        </form>
 
-      <ul>
-        {shortUrls.map((url) => (
-          <li key={url.id} className="mb-2">
-            <div className="flex justify-between items-center">
-              <div>
-                <a
-                  href={`https://localhost:7172/${url.shortCode}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline"
-                >
-                  {url.shortCode}
-                </a>
-                <p className="text-sm text-gray-500">{url.originalUrl}</p>
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => copyToClipboard(url.shortCode)}
-                  className="bg-green-500 text-white px-2 py-1 rounded"
-                >
-                  Копіювати
-                </button>
-                <button
-                  onClick={() => handleDelete(url.id)}
-                  className="bg-red-500 text-white px-2 py-1 rounded"
-                >
-                  Видалити
-                </button>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+        {message && (
+          <div
+            className={`mb-4 p-3 rounded text-center font-semibold ${messageType === "success" ? "bg-green-500" : "bg-red-500"} text-white`}
+          >
+            {message}
+          </div>
+        )}
+
+        {shortUrls.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full table-auto border-collapse">
+              <thead>
+                <tr className="bg-gray-200 text-gray-700 text-left">
+                  <th className="p-2 border">Original</th>
+                  <th className="p-2 border">Shortened</th>
+                  <th className="p-2 border text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {shortUrls.map((url) => (
+                  <tr key={url.id} className="hover:bg-gray-100">
+                    <td className="p-2 border text-sm text-gray-800 break-all">{url.originalUrl}</td>
+                    <td className="p-2 border text-blue-600 underline">
+                      <a
+                        href={`https://localhost:7172/${url.shortCode}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {url.shortCode}
+                      </a>
+                    </td>
+                    <td className="p-2 border text-center space-x-2">
+                      <button
+                        onClick={() => copyToClipboard(url.shortCode)}
+                        className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
+                      >
+                        <Clipboard size={18} />
+                        Copy
+                      </button>
+                      <button
+                        onClick={() => handleDelete(url.id)}
+                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                      >
+                        <Trash2 size={18} />
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-center text-gray-500">No shortened URLs yet 😌</p>
+        )}
+      </div>
     </div>
   );
 }

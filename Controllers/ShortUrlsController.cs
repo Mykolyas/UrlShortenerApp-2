@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UrlShortenerApp_2.Data;
-using UrlShortenerApp_2.Models; // якщо твоя модель там
+using UrlShortenerApp_2.Models;
 
 
 [Route("api/[controller]")]
@@ -37,11 +37,11 @@ public class ShortUrlsController : ControllerBase
     {
         var userId = _userManager.GetUserId(User);
 
-        // Перевірка на дублікати
+        // Duplication check
         if (await _context.ShortUrls.AnyAsync(u => u.OriginalUrl == originalUrl))
             return BadRequest("This URL already exists.");
 
-        var shortCode = GenerateShortCode(); // Твоя функція скорочення (можу допомогти)
+        var shortCode = GenerateShortCode();
 
         var shortUrl = new ShortUrl
         {
@@ -102,7 +102,6 @@ public class ShortUrlsController : ControllerBase
 
     private string GenerateShortCode()
     {
-        // Проста версія — можу запропонувати Base62
         return Guid.NewGuid().ToString().Substring(0, 6);
     }
 }

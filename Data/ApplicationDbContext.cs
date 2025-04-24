@@ -18,7 +18,7 @@ namespace UrlShortenerApp_2.Data
 
             builder.Entity<ShortUrl>()
                 .HasIndex(u => u.ShortCode)
-                .IsUnique(); // забезпе́чимо унікальність ShortCode
+                .IsUnique();
         }
     }
 }
